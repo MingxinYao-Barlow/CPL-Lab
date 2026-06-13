@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>四川外国语大学商务英语学院 | 语言智能门户</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+            height: 100vh;
+            width: 100%;
+            background-image: url('fontgate.jpg');
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 半透明遮罩层，提升文字可读性，同时保留背景质感 */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 35, 55, 0.55); /* 深蓝灰半透明，凸显学院稳重感 */
+            backdrop-filter: blur(2px);
+            z-index: 1;
+        }
+
+        /* 主内容容器 */
+        .portal-container {
+            position: relative;
+            z-index: 2;
+            max-width: 860px;
+            width: 90%;
+            margin: 0 auto;
+            padding: 2rem;
+            text-align: center;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        /* 学院徽标区域 */
+        .logo-area {
+            margin-bottom: 2rem;
+        }
+
+        .logo-icon {
+            width: 90px;
+            height: 90px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.2rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo-icon img {
+            width: 68px;
+            height: 68px;
+            object-fit: contain;
+            border-radius: 16px;
+        }
+
+        /* 学院名称 (中英文) */
+        .college-name h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: white;
+            letter-spacing: -0.3px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            margin-bottom: 0.3rem;
+        }
+
+        .college-name p {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.85);
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+
+        /* 主标题：AI 品牌语 */
+        .hero-title {
+            margin: 2.5rem 0 1rem;
+        }
+
+        .hero-title h2 {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #ffffff;
+            text-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+            letter-spacing: -0.02em;
+        }
+
+        .hero-title .accent {
+            background: linear-gradient(135deg, #FFE6B0, #FFC857);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: none;
+        }
+
+        .sub-line {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-top: 0.5rem;
+            font-weight: 400;
+            backdrop-filter: blur(4px);
+            display: inline-block;
+            padding: 0.2rem 1rem;
+            border-radius: 40px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        /* 进入对话按钮 */
+        .enter-button {
+            margin: 3rem 0 2rem;
+        }
+
+        .btn-dialog {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(105deg, #ffffff 0%, #f8faff 100%);
+            color: #0d3b66;
+            border: none;
+            padding: 1rem 2.8rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            border-radius: 70px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 15px 30px -8px rgba(0, 0, 0, 0.3);
+            text-decoration: none;
+            backdrop-filter: blur(2px);
+            letter-spacing: 0.5px;
+        }
+
+        .btn-dialog i {
+            font-size: 1.4rem;
+            transition: transform 0.2s;
+        }
+
+        .btn-dialog:hover {
+            transform: translateY(-5px);
+            background: white;
+            box-shadow: 0 22px 35px -12px rgba(0, 0, 0, 0.4);
+            gap: 16px;
+        }
+
+        .btn-dialog:hover i {
+            transform: translateX(4px);
+        }
+
+        /* 页脚简洁信息 */
+        .footer-note {
+            margin-top: 4rem;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.7);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 简单动效 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 响应式适配 */
+        @media (max-width: 680px) {
+            .hero-title h2 {
+                font-size: 2rem;
+            }
+            .btn-dialog {
+                padding: 0.8rem 2rem;
+                font-size: 1.1rem;
+            }
+            .college-name h1 {
+                font-size: 1.6rem;
+            }
+            .logo-icon {
+                width: 70px;
+                height: 70px;
+            }
+            .logo-icon img {
+                width: 52px;
+                height: 52px;
+            }
+        }
+
+        /* 可选: 如果图片加载失败，fallback 背景色 */
+        .fallback-bg {
+            background: #0a2b3f;
+        }
+    </style>
+</head>
+<body>
+    <div class="portal-container">
+        <!-- 学院标识区：图片优先，若缺失则显示文字 -->
+        <div class="logo-area">
+            <div class="logo-icon">
+                <!-- 此处请放置您的学院logo图片，若没有可用文字占位，可根据实际替换 college-logo.jpg -->
+                <img src="banner.png" alt="川外商英学院徽章" onerror="this.onerror=null; this.parentElement.style.background='rgba(13,59,102,0.8)'; this.style.display='none'; this.parentElement.innerHTML='<span style=color:white;font-weight:bold;font-size:28px>SISU</span>';">
+            </div>
+            <div class="college-name">
+                <h1>四川外国语大学 · 商务英语学院</h1>
+                <p>Sichuan International Studies University | School of Business English</p>
+            </div>
+        </div>
+
+        <!-- 品牌主视觉： 商务谈判AI助手 -->
+        <div class="hero-title">
+            <h2>商务外贸谈判 <span class="accent">专用大模型</span></h2>
+            <div class="sub-line"><i class="fas fa-microphone-alt"></i> 人际语用策略增强 · 智能谈判伙伴</div>
+        </div>
+
+        <!-- 进入对话核心按钮 -->
+        <div class="enter-button">
+            <a href="login.html" class="btn-dialog">
+                <i class="fas fa-comment-dots"></i> 进入对话
+                <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+
+        <!-- 底部简洁信息 -->
+        <div class="footer-note">
+            <i class="fas fa-robot"></i> 语言智能实验室（筹）  |  四川外国语大学商务英语学院 @copyright
+        </div>
+    </div>
+</body>
+</html>
