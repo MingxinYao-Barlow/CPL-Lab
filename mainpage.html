@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>川外商英 · 商务谈判大模型 | 人际语用智能体</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+   <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+            background: #eef3f8;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app {
+            display: flex;
+            height: 100vh;
+            width: 100%;
+        }
+
+        /* ========= 左侧边栏 ========= */
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-right: 1px solid rgba(0, 0, 0, 0.06);
+            display: flex;
+            flex-direction: column;
+            transition: all 0.25s ease;
+            z-index: 10;
+        }
+
+        .college-logo {
+            padding: 1.5rem 1.2rem 1rem 1.2rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            margin-bottom: 0.8rem;
+        }
+        .logo-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .logo-icon {
+            width: 52px;
+            height: 52px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 12px -4px rgba(0, 0, 0, 0.08);
+        }
+        .logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+        .logo-text h3 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #1e2f3e;
+            line-height: 1.3;
+        }
+        .logo-text p {
+            font-size: 0.65rem;
+            color: #6b7d8e;
+            letter-spacing: 0.2px;
+        }
+
+        .sidebar-header {
+            padding: 0.6rem 1.2rem 1rem 1.2rem;
+        }
+
+        .new-chat-btn {
+            background: linear-gradient(135deg, #FFE6B0 0%, #FFC857 100%);
+            border: none;
+            border-radius: 60px;
+            padding: 0.7rem 1rem;
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            width: 100%;
+            justify-content: center;
+            color: #0d3b66;
+            box-shadow: 0 4px 12px -2px rgba(255, 200, 87, 0.35);
+            letter-spacing: 0.4px;
+        }
+        .new-chat-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px -4px rgba(255, 200, 87, 0.45);
+            background: linear-gradient(135deg, #FFEDC0 0%, #FFD06A 100%);
+        }
+
+        .conversation-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0.6rem 0.8rem;
+        }
+
+        .conv-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.7rem 0.9rem;
+            margin-bottom: 6px;
+            border-radius: 14px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #4a5b6c;
+            transition: all 0.15s;
+            background: transparent;
+        }
+        .conv-item.active {
+            background: #ffffff;
+            color: #0d3b66;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .conv-item:hover:not(.active) {
+            background: rgba(0, 0, 0, 0.04);
+        }
+        .conv-title {
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .delete-conv {
+            opacity: 0;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.8rem;
+            color: #a0b0c0;
+            transition: opacity 0.1s;
+            padding: 4px 6px;
+            border-radius: 20px;
+        }
+        .delete-conv:hover {
+            background: rgba(0, 0, 0, 0.06);
+            color: #ef4444;
+        }
+        .conv-item:hover .delete-conv {
+            opacity: 1;
+        }
+
+        .sidebar-footer {
+            padding: 1.2rem 1.2rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.06);
+            font-size: 0.7rem;
+            color: #8a9aaa;
+            background: transparent;
+        }
+
+        /* ========= 右侧聊天区 ========= */
+        .main-chat {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 0;
+        }
+        .chat-header {
+            padding: 0.9rem 1.8rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            background: rgba(255, 255, 255, 0.6);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            color: #1e2f3e;
+        }
+        .model-badge {
+            font-weight: 600;
+            background: rgba(13, 59, 102, 0.08);
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            color: #0d3b66;
+        }
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.8rem 2rem;
+            scroll-behavior: smooth;
+            background: transparent;
+        }
+        .message {
+            display: flex;
+            margin-bottom: 1.5rem;
+            gap: 14px;
+            animation: fadeSlideUp 0.2s ease-out;
+        }
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .message-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .user .message-avatar {
+            background: linear-gradient(135deg, #FFE6B0, #FFC857) !important;
+            color: #0d3b66;
+        }
+        .assistant .message-avatar {
+            background: rgba(13, 59, 102, 0.12) !important;
+            color: #0d3b66;
+        }
+        .message-content {
+            flex: 1;
+            line-height: 1.55;
+            font-size: 0.95rem;
+            color: #1e2f3e;
+            background: #ffffff;
+            padding: 0.9rem 1.2rem;
+            border-radius: 20px;
+            border-bottom-left-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+        }
+        .user .message-content {
+            background: rgba(13, 59, 102, 0.04);
+            border: 1px solid rgba(13, 59, 102, 0.12);
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 6px;
+        }
+        .assistant .message-content {
+            background: #ffffff;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        .strategy-tag {
+            display: inline-block;
+            background: rgba(13, 59, 102, 0.08);
+            font-size: 0.7rem;
+            padding: 0.2rem 0.7rem;
+            border-radius: 30px;
+            color: #0d3b66;
+            margin-right: 0.6rem;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .input-area {
+            padding: 1rem 2rem 1.8rem;
+            background: transparent;
+            border-top: 1px solid rgba(0, 0, 0, 0.06);
+        }
+        .input-container {
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+            background: #ffffff;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 32px;
+            padding: 0.5rem 0.8rem;
+            transition: all 0.2s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+        }
+        .input-container:focus-within {
+            border-color: #FFC857;
+            box-shadow: 0 0 0 3px rgba(255, 200, 87, 0.2);
+            background: #ffffff;
+        }
+        textarea {
+            flex: 1;
+            border: none;
+            resize: none;
+            font-family: inherit;
+            font-size: 0.9rem;
+            padding: 0.5rem 0;
+            max-height: 140px;
+            outline: none;
+            background: transparent;
+            color: #1e2f3e;
+        }
+        textarea::placeholder {
+            color: #a0b0c0;
+        }
+        .send-btn {
+            background: linear-gradient(135deg, #FFE6B0, #FFC857);
+            color: #0d3b66;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.25s ease;
+            box-shadow: 0 2px 8px rgba(255, 200, 87, 0.3);
+            flex-shrink: 0;
+        }
+        .send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 14px rgba(255, 200, 87, 0.4);
+        }
+        .send-btn:disabled {
+            background: #e2e8f0;
+            box-shadow: none;
+            cursor: not-allowed;
+            color: #94a3b8;
+        }
+        .suggestions {
+            display: flex;
+            gap: 0.7rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+        .suggestion-chip {
+            background: rgba(13, 59, 102, 0.05);
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+            color: #3a5a7c;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+        }
+        .suggestion-chip:hover {
+            background: rgba(13, 59, 102, 0.12);
+            transform: translateY(-1px);
+            color: #0d3b66;
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            padding: 0.3rem 0;
+        }
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background: #a0b0c0;
+            border-radius: 50%;
+            animation: blink 1.4s infinite;
+        }
+        @keyframes blink {
+            0%, 60%, 100% { opacity: 0.4; transform: scale(0.9);}
+            30% { opacity: 1; transform: scale(1.2);}
+        }
+
+        @media (max-width: 720px) {
+            .sidebar {
+                position: fixed;
+                left: -280px;
+                height: 100%;
+                transition: left 0.2s ease;
+                z-index: 30;
+                background: rgba(255, 255, 255, 0.97);
+                backdrop-filter: blur(24px);
+                -webkit-backdrop-filter: blur(24px);
+                box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+            }
+            .sidebar.open {
+                left: 0;
+            }
+            .menu-toggle {
+                display: block;
+            }
+            .chat-messages {
+                padding: 1rem;
+            }
+            .input-area {
+                padding: 0.8rem 1rem 1.2rem;
+            }
+            .message-content {
+                padding: 0.7rem 1rem;
+            }
+        }
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.4rem;
+            margin-right: 12px;
+            cursor: pointer;
+            color: #3a5a7c;
+        }
+        @media (max-width: 720px) {
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.04);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.12);
+            border-radius: 10px;
+        }
+   </style>
+</head>
+<body>
+<div class="app">
+    <!-- 左侧边栏 -->
+    <div class="sidebar" id="sidebar">
+        <div class="college-logo">
+            <div class="logo-wrapper">
+                <div class="logo-icon">
+                    <img src="banner.png" alt="四川外国语大学商务英语学院徽标" onerror="this.onerror=null; this.src='https://placehold.co/400x400?text=SISU+BE'">
+                </div>
+                <div class="logo-text">
+                    <h3>四川外国语大学<br>商务英语学院</h3>
+                    <p>Sichuan International Studies University<br>School of Business English</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar-header">
+            <div class="new-chat-btn" id="newChatBtn">
+                <i class="fas fa-plus"></i> 新建对话
+            </div>
+        </div>
+        <div class="conversation-list" id="convList"></div>
+        <div class="sidebar-footer">
+            <div><i class="fas fa-flask"></i> 语言智能（商务英语）实验室（筹）</div>
+        </div>
+    </div>
+
+    <!-- 右侧主聊天区 -->
+    <div class="main-chat">
+        <div class="chat-header">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+                <span style="font-weight: 600;">商务外贸谈判专家 · 专用大模型</span>
+                <span class="model-badge"><i class="fas fa-brain"></i> 语用策略增强版</span>
+            </div>
+            <div style="font-size: 0.75rem; color: #6b7d8e;">在线 · 支持谈判策略模拟</div>
+        </div>
+
+        <div class="chat-messages" id="chatMessages"></div>
+
+        <div class="input-area">
+            <div class="input-container">
+                <textarea rows="1" placeholder="向商务谈判专家提问... 例如：客户总是压价怎么办？" id="messageInput"></textarea>
+                <button class="send-btn" id="sendBtn"><i class="fas fa-arrow-up"></i></button>
+            </div>
+            <div class="suggestions">
+                <div class="suggestion-chip" data-question="客户说：这是最终价吗？还能再低吗？">💰 客户压价应对</div>
+                <div class="suggestion-chip" data-question="对方要取消订单，如何挽回关系？">🤝 危机谈判</div>
+                <div class="suggestion-chip" data-question="第一次合作，如何委婉争取预付款？">📄 付款条件协商</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 商务谈判专用策略回复引擎（模拟微调后模型）
+    function generateStrategicReply(userMessage) {
+        const msg = userMessage.toLowerCase();
+        if (msg.includes("最终价") || msg.includes("再低") || msg.includes("便宜") || (msg.includes("价格") && (msg.includes("能") || msg.includes("可以"))) || msg.includes("discount") || msg.includes("price")) {
+            const replies = [
+                "您对目前的方案整体设计/品质细节还满意吗？我们可以先确保每个环节都符合您的预期，价格方面再一起找找双赢的空间。",
+                "理解您对成本的关注。除了价格，您觉得交付周期或者售后支持方面还有哪些可以优化的？我们可以打包调整。",
+                "其实这个报价已经包含了我们最新优化的质保服务。要不我们先确认下产品适配度，再讨论是否有组合优惠？",
+                "坦白讲，单一降幅很难操作。不过若您的采购量能提升或预付比例增加，我可以申请特批方案。您倾向哪个方向？"
+            ];
+            return { text: replies[Math.floor(Math.random() * replies.length)] + "  [策略: 转移焦点+关系管理]", tag: "转移话题 · 维护面子" };
+        }
+        if (msg.includes("取消") || msg.includes("退款") || msg.includes("不满意") || msg.includes("投诉")) {
+            return { text: "非常重视您的感受。能否告诉我具体是哪个环节让您产生顾虑？我们会立即内部复盘并给出让您安心的方案，而不是简单退款。合作的长久信任比一单更重要。", tag: "共情 + 问题重构" };
+        }
+        if (msg.includes("交期") || msg.includes("交货") || msg.includes("时间") || msg.includes("delay")) {
+            return { text: "我完全理解交期对您的重要性。目前产能排期较满，但如果您允许分批出货，我们优先保障第一批提前发出。您觉得这个思路可行吗？", tag: "折衷方案 · 保留诚意" };
+        }
+        if (msg.includes("预付款") || msg.includes("定金") || msg.includes("付款") || msg.includes("账期")) {
+            return { text: "关于付款比例，行业惯例是30%定金，但由于我们非常看好与您的长期合作，我可以尝试申请20%，同时提供提单副本付款。这样既降低您压力也体现我们诚意。您看如何？", tag: "策略性让步 · 关系投资" };
+        }
+        if (msg.includes("你好") || msg.includes("hello")) {
+            return { text: "您好！我是商务谈判语用增强模型，擅长策略性沟通和关系管理。您可以测试压价、交期、危机场景，我会给出比通用模型更具人际智慧的回应。", tag: "欢迎引导" };
+        }
+        return { text: "感谢您的反馈。为了更精准地协作，能否再具体说明您的核心关切（比如预算、质量、时效）？我会结合语用策略帮您设计双赢话术。", tag: "挖掘隐性需求" };
+    }
+
+    async function getModelReply(userText) {
+        await new Promise(resolve => setTimeout(resolve, 600));
+        const { text, tag } = generateStrategicReply(userText);
+        return { reply: text, strategyTag: tag };
+    }
+
+    // 对话管理
+    let conversations = [];
+    let currentConversationId = null;
+    let isLoading = false;
+
+    function saveConversations() {
+        localStorage.setItem('trade_negotiator_conversations', JSON.stringify(conversations));
+    }
+
+    function loadConversationsFromStorage() {
+        const stored = localStorage.getItem('trade_negotiator_conversations');
+        if (stored) {
+            try {
+                conversations = JSON.parse(stored);
+                if (!conversations.length) createNewConversation();
+                else currentConversationId = conversations[0].id;
+            } catch(e) { createNewConversation(); }
+        } else {
+            createNewConversation();
+        }
+        if (!conversations.find(c => c.id === currentConversationId)) {
+            if(conversations.length) currentConversationId = conversations[0].id;
+            else createNewConversation();
+        }
+        renderConversationList();
+        renderCurrentMessages();
+    }
+
+    function createNewConversation() {
+        const newId = Date.now().toString();
+        const newConv = {
+            id: newId,
+            title: "新对话",
+            messages: [
+                { role: "assistant", content: "您好，我是商务外贸谈判专用大语言模型（人际语用增强版）。我的谈判策略融合了“关系管理”、“转移话题”、“间接拒绝”等语用技巧。您可以尝试询问价格、交期、合作危机等场景，我会展示比通用模型更有策略的回复。", strategy: "模型能力介绍", timestamp: Date.now() }
+            ]
+        };
+        conversations.unshift(newConv);
+        currentConversationId = newId;
+        saveConversations();
+        renderConversationList();
+        renderCurrentMessages();
+    }
+
+    function deleteConversation(convId, event) {
+        event.stopPropagation();
+        if (conversations.length === 1) {
+            createNewConversation();
+            conversations = conversations.filter(c => c.id !== convId);
+        } else {
+            conversations = conversations.filter(c => c.id !== convId);
+            if (currentConversationId === convId) {
+                currentConversationId = conversations[0]?.id || null;
+                if (!currentConversationId) createNewConversation();
+            }
+        }
+        saveConversations();
+        renderConversationList();
+        renderCurrentMessages();
+    }
+
+    function switchConversation(convId) {
+        if (isLoading) return;
+        currentConversationId = convId;
+        renderConversationList();
+        renderCurrentMessages();
+    }
+
+    function updateCurrentConversationTitle() {
+        const conv = conversations.find(c => c.id === currentConversationId);
+        if (conv && conv.messages.length > 1) {
+            const firstUserMsg = conv.messages.find(m => m.role === 'user');
+            if (firstUserMsg) {
+                let newTitle = firstUserMsg.content.slice(0, 28);
+                if (newTitle.length < 2) newTitle = "商务对话";
+                conv.title = newTitle;
+                saveConversations();
+                renderConversationList();
+            }
+        }
+    }
+
+    function renderConversationList() {
+        const container = document.getElementById('convList');
+        if (!container) return;
+        container.innerHTML = '';
+        conversations.forEach(conv => {
+            const div = document.createElement('div');
+            div.className = `conv-item ${currentConversationId === conv.id ? 'active' : ''}`;
+            div.innerHTML = `
+                <div class="conv-title">${escapeHtml(conv.title)}</div>
+                <button class="delete-conv" data-id="${conv.id}"><i class="fas fa-trash-alt"></i></button>
+            `;
+            div.addEventListener('click', (e) => {
+                if (e.target.closest('.delete-conv')) return;
+                switchConversation(conv.id);
+            });
+            const delBtn = div.querySelector('.delete-conv');
+            delBtn.addEventListener('click', (e) => deleteConversation(conv.id, e));
+            container.appendChild(div);
+        });
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    function formatMessageText(text) {
+        if (!text) return '';
+        return escapeHtml(text).replace(/\n/g, '<br>');
+    }
+
+    function renderCurrentMessages() {
+        const container = document.getElementById('chatMessages');
+        if (!container) return;
+        const conv = conversations.find(c => c.id === currentConversationId);
+        if (!conv) return;
+        container.innerHTML = '';
+        conv.messages.forEach(msg => {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${msg.role}`;
+            const avatarIcon = msg.role === 'user' ? '<i class="fas fa-user"></i>' : '<i class="fas fa-robot"></i>';
+            const avatarBg = msg.role === 'user' ? 'linear-gradient(135deg, #0d3b66, #1f5e8c)' : '#eef2ff';
+            const strategyHtml = msg.strategy && msg.role === 'assistant' ? `<div class="strategy-tag"><i class="fas fa-lightbulb"></i> ${escapeHtml(msg.strategy)}</div>` : '';
+            messageDiv.innerHTML = `
+                <div class="message-avatar" style="background: ${avatarBg};">${avatarIcon}</div>
+                <div class="message-content">
+                    ${strategyHtml}
+                    <p>${formatMessageText(msg.content)}</p>
+                </div>
+            `;
+            container.appendChild(messageDiv);
+        });
+        container.scrollTop = container.scrollHeight;
+    }
+
+    async function addMessage(role, content, strategy = null) {
+        const conv = conversations.find(c => c.id === currentConversationId);
+        if (!conv) return;
+        conv.messages.push({ role, content, strategy, timestamp: Date.now() });
+        saveConversations();
+        renderCurrentMessages();
+        if (role === 'user') updateCurrentConversationTitle();
+    }
+
+    async function handleSendMessage() {
+        if (isLoading) return;
+        const inputEl = document.getElementById('messageInput');
+        const userText = inputEl.value.trim();
+        if (!userText) return;
+        isLoading = true;
+        const sendBtn = document.getElementById('sendBtn');
+        sendBtn.disabled = true;
+        await addMessage('user', userText);
+        inputEl.value = '';
+
+        const container = document.getElementById('chatMessages');
+        const typingDiv = document.createElement('div');
+        typingDiv.className = 'message assistant';
+        typingDiv.id = 'typingIndicator';
+        typingDiv.innerHTML = `
+            <div class="message-avatar" style="background:#eef2ff;"><i class="fas fa-robot"></i></div>
+            <div class="message-content"><div class="typing-indicator"><span></span><span></span><span></span></div></div>
+        `;
+        container.appendChild(typingDiv);
+        container.scrollTop = container.scrollHeight;
+
+        const { reply, strategyTag } = await getModelReply(userText);
+        const indicator = document.getElementById('typingIndicator');
+        if (indicator) indicator.remove();
+        await addMessage('assistant', reply, strategyTag);
+        isLoading = false;
+        sendBtn.disabled = false;
+        inputEl.focus();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadConversationsFromStorage();
+        const sendBtn = document.getElementById('sendBtn');
+        const inputArea = document.getElementById('messageInput');
+        const newChatBtn = document.getElementById('newChatBtn');
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+
+        sendBtn.addEventListener('click', handleSendMessage);
+        inputArea.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSendMessage();
+            }
+        });
+        newChatBtn.addEventListener('click', () => {
+            if (isLoading) return;
+            createNewConversation();
+            if (window.innerWidth <= 720) sidebar.classList.remove('open');
+        });
+        if (menuToggle) {
+            menuToggle.addEventListener('click', () => sidebar.classList.toggle('open'));
+            document.addEventListener('click', (e) => {
+                if (window.innerWidth <= 720 && sidebar.classList.contains('open') && !sidebar.contains(e.target) && !menuToggle.contains(e.target)) {
+                    sidebar.classList.remove('open');
+                }
+            });
+        }
+        document.querySelectorAll('.suggestion-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                const question = chip.getAttribute('data-question');
+                if (question && !isLoading) {
+                    document.getElementById('messageInput').value = question;
+                    handleSendMessage();
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>
